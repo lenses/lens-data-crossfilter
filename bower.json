@@ -1,0 +1,11 @@
+{
+  "name": "th-data-crossfilter",
+  "version": "0.0.0",
+  "keywords": "thelma, polymer, web-components",
+  "main": "th-data-crossfilter.html",
+  "dependencies": {  
+    "th-theme": "thelmanews/th-theme",
+    "polymer": "Polymer/polymer#~0.5.1"
+  }
+}
+
