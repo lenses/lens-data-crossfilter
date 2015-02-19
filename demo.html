@@ -82,9 +82,6 @@
         //set the input
         component.input = input;
 
-        //set the split column to be the first element in the input
-        component.splitCol = Object.keys(input[0])[0];
-
         // helper function to stringify objects, used below like {{outputs | json}}
         PolymerExpressions.prototype.json = function(object) {
           return JSON.stringify(object, undefined, 2);
