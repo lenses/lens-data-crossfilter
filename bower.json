@@ -4,7 +4,7 @@
   "keywords": "thelma, polymer, web-components",
   "main": "th-data-crossfilter.html",
   "dependencies": {  
-    "th-theme": "thelmanews/th-theme",
+	"d3": "d3#>=3.4.11",
     "polymer": "Polymer/polymer#~0.5.1"
   }
 }
