@@ -51,6 +51,11 @@
         border-bottom: 1px solid #E5E5E5 !important;
       }
 
+      .count {
+        float: right;
+        font-size: 12px;
+      }
+
     </style>
 
   </head>
@@ -59,7 +64,7 @@
     <template id="auto-bind-demo" is="auto-binding">
 
       <section>
-        <label>Input:</label>
+        <label>Input:</label><span class="count">{{myinput.length}} records</span>
         <pre id="input">{{myinput | json}}</pre>
       </section>
       <section class="component">
@@ -67,7 +72,7 @@
         <th-data-crossfilter id="component" input="{{myinput}}" output="{{myoutput}}"></th-data-crossfilter>
       </section>
       <section>
-        <label>Output:</label>
+        <label>Output:</label><span class="count">{{myoutput.length}} records</span>
         <pre>{{myoutput | json}}</pre>
       </section>
       
