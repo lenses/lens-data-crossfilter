@@ -1,4 +1,9 @@
 <link rel="import" href="../polymer/polymer.html"> 
+<link rel="import" href="../core-collapse/core-collapse.html">
+<link rel="import" href="../core-input/core-input.html">
+<link rel="import" href="../core-icon-button/core-icon-button.html">
+<link rel="import" href="../th-u-data-selector/th-u-data-selector.html">
+
 
 <!--
 
@@ -14,38 +19,80 @@ A component for crossfiltering data using square crossfilter library
 @homepage http://thelmanews.github.io/th-data-crossfilter
 -->
 
-<polymer-element name="th-data-crossfilter" attributes="input output">
+<polymer-element name="th-data-crossfilter" attributes="input output ">
   <template>
     <link rel="stylesheet" href="th-data-crossfilter.css">
-    <template repeat="{{attr in _dataAttributes}}">
-      {{attr}}
-      <div class="chart" id="data-{{attr}}">
-      </div>
-    </template>
+    <div class="th-container">
+
+      <template if="{{!included}}">
+        <core-icon-button icon="perm-data-setting" on-click="{{showControls}}"></core-icon-button>
+      </template>
+
+
+      <!--core-collapse shows table settings. Toggled off by default-->
+      <core-collapse id="ctrl_collapse" opened="false">
+        <!--<th-u-data-selector id="data_selector" input="{{input}}"></th-u-data-selector>-->
+        <label class="label">
+         filter: 
+        </label>
+          
+        <core-selector class="selector" id="value_selector"  valueattr="label" multi="true">
+            <template repeat="{{attr in _dataAttributes}}">
+              <template if="{{attr}}">
+                <div class="col" label="{{attr}}">{{attr}}</div>
+              </template>
+            </template>
+        </core-selector>
+        <div class="charts">
+
+          <template repeat="{{attr in selectedLabels}}">
+            {{attr}}
+            <div class="chart" id="data-{{attr}}">
+            </div>
+          </template>
+        </div>
+      </core-collapse>
+    </div>
 
   </template>
   <script src="../d3/d3.min.js"></script> <!--TODO: ? use d3-import.html? -->
   <script src="lib/crossfilter.js"></script> 
   <script>
     Polymer({
-      input: [
-        {a: 7, b: 2, c: 12, d: 5},
-        {a: 4, b: 1, c: 14, d: 6},
-        {a: 3, b: 2, c: 13, d: 7},
-        {a: 1, b: 3, c: 13, d: 8},
-        {a: 3, b: 0, c: 14, d: 9},
-        {a: 8, b: 2, c: 20, d: 10},
-        {a: 1, b: 2, c: 10, d: 11},
-        {a: 2, b: 2, c: 15, d: 12},
-        {a: 5, b: 3, c: 18, d: 13},
-        {a: 2, b: 2, c: 15, d: 14},
-        {a: 3, b: 1, c: 12, d: 15},
-        {a: 9, b: 2, c: 20, d: 16}
+      
+      /*
+       input: [
+        {aaa: 7, b: 2, c: 12, d: 5},
+        {aaa: 4, b: 1, c: 14, d: 6},
+        {aaa: 3, b: 2, c: 13, d: 7},
+        {aaa: 1, b: 3, c: 13, d: 8},
+        {aaa: 3, b: 0, c: 14, d: 9},
+        {aaa: 8, b: 2, c: 20, d: 10},
+        {aaa: 1, b: 2, c: 10, d: 11},
+        {aaa: 2, b: 2, c: 15, d: 12},
+        {aaa: 5, b: 3, c: 18, d: 13},
+        {aaa: 2, b: 2, c: 15, d: 14},
+        {aaa: 3, b: 1, c: 12, d: 15},
+        {aaa: 9, b: 2, c: 20, d: 16}
         ],
+        */
+        
 
-      ready: function () {
+      observe: {
+        labelValueSelection: "inputChanged"
+      },
+
+
+      domReady: function () {
+
+
+        this.$.value_selector.addEventListener('core-select', function() {
+          this.selectedLabels = [];
+          this.selectedLabels = this.$.value_selector.selected;
+          this.inputChanged();
+        }.bind(this));
+
         this.inputChanged();
-            
 
 
       },
@@ -53,37 +100,39 @@ A component for crossfiltering data using square crossfilter library
       
       inputChanged: function() {
 
-          var self = this;
-          var firstItem = self.input[0];
-          if(!firstItem) {
-            return;
-          }
-          var attributes = Object.keys(firstItem);
-          
-          if(JSON.stringify(self._dataAttributes) === JSON.stringify(attributes) ) {
-            //self._mapChartData();
-          }
-          else {
-            self._dataAttributes = attributes;
-          }
+        var self = this;
 
-          //self._findNumericalColumns();
+        if(!self.input) {
+          return;
+        }
+        var firstItem = self.input[0];
+        if(!firstItem) {
+          return;
+        }
+        var attributes = Object.keys(firstItem);
+        
+        if(JSON.stringify(self._dataAttributes) === JSON.stringify(attributes) ) {
 
-          //self._calculateOutput(); 
-          //
-        //intitial output to pass input (filter nothing)
+        }
+        else {
+          self._dataAttributes = attributes;
+        }
+
         this.output = this.input;
 
         this.crossfilter = crossfilter(this.input);
         this.groupAll = this.crossfilter.groupAll();
 
-        //this.output = this.groups.all();
-                   
 
         this._dimensions = [];
         this._charts = [];
 
-        this._dataAttributes.forEach(function(attr) {
+
+        if(!this.selectedLabels || this.selectedLabels.length===0 || !this.input[0][this.selectedLabels[0]]) {
+          return;
+        }
+        console.log('selectedLabels', this.selectedLabels);
+        this.selectedLabels.forEach(function(attr) {
             var dimension = {};
 
             var n = this.input[0][attr];
@@ -96,20 +145,21 @@ A component for crossfiltering data using square crossfilter library
             
 
 
-            console.log('domain',dimension.group.top(Infinity));
+            //console.log('domain',dimension.group.top(Infinity));
 
             if(!isNaN(parseFloat(n)) && isFinite(n))
             {
+              var range = dimension.max - dimension.min;
               dimension.chart = barChart()
                 .dimension(dimension.dim)
                 .group(dimension.group)
                 .x(d3.scale.linear()
-                .domain([dimension.min, dimension.max])
+                .domain([dimension.min, parseFloat(dimension.max)+range*.1])
                 .rangeRound([0, 10 * 24]));
             }
             else {
               var domain = dimension.group.top(Infinity).map(function(item) {return item.key} );
-              console.log('domain', domain);
+              //console.log('domain', domain);
 
               dimension.chart = barChart()
                 .dimension(dimension.dim)
@@ -118,7 +168,7 @@ A component for crossfiltering data using square crossfilter library
                 .domain(domain)
                 .rangeRoundPoints([0, 10 * 24]));
 
-                console.log(dimension.chart.x().range());
+               // console.log(dimension.chart.x().range());
 
             }
 
@@ -127,6 +177,8 @@ A component for crossfiltering data using square crossfilter library
 
              
         }.bind(this));
+
+        console.log(this._dimensions);
 
 
         var chart;
@@ -364,9 +416,21 @@ A component for crossfiltering data using square crossfilter library
             return d3.rebind(chart, brush, "on");
 
           }
-          //barchart?
+          
+
+          
 
       },       
+      /**
+       *  Toggles whether the settings box is open or closed.
+       *  Defaults to closed.
+       *  
+       *  @method showControls
+       */
+      showControls: function(e) {
+        this.$.ctrl_collapse.toggle();
+      },
+
     });
   </script>
 </polymer-element>
