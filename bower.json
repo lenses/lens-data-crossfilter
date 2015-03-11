@@ -1,8 +1,8 @@
 {
-  "name": "th-data-crossfilter",
+  "name": "lens-data-crossfilter",
   "version": "0.0.0",
-  "keywords": "thelma, polymer, web-components",
-  "main": "th-data-crossfilter.html",
+  "keywords": "lenses, polymer, web-components",
+  "main": "lens-data-crossfilter.html",
   "dependencies": {  
 	"d3": "d3#>=3.4.11",
     "polymer": "Polymer/polymer#~0.5.1"
