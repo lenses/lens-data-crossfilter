@@ -2,7 +2,7 @@
 <link rel="import" href="../core-collapse/core-collapse.html">
 <link rel="import" href="../core-input/core-input.html">
 <link rel="import" href="../core-icon-button/core-icon-button.html">
-<link rel="import" href="../th-u-data-selector/th-u-data-selector.html">
+<link rel="import" href="../lens-u-data-selector/lens-u-data-selector.html">
 
 
 <!--
@@ -11,18 +11,18 @@ A component for crossfiltering data using square crossfilter library
 
 ##### Example
 
-    <th-data-crossfilter></th-data-crossfilter>
+    <lens-data-crossfilter></lens-data-crossfilter>
 
-@element th-data-crossfilter
+@element lens-data-crossfilter
 @blurb Element providing solution to no problem in particular.
 @status alpha
-@homepage http://thelmanews.github.io/th-data-crossfilter
+@homepage http://thelmanews.github.io/lens-data-crossfilter
 -->
 
-<polymer-element name="th-data-crossfilter" attributes="input output ">
+<polymer-element name="lens-data-crossfilter" attributes="input output ">
   <template>
-    <link rel="stylesheet" href="th-data-crossfilter.css">
-    <div class="th-container">
+    <link rel="stylesheet" href="lens-data-crossfilter.css">
+    <div class="lens-container">
 
       <template if="{{!included}}">
         <core-icon-button icon="perm-data-setting" on-click="{{showControls}}"></core-icon-button>
@@ -31,7 +31,7 @@ A component for crossfiltering data using square crossfilter library
 
       <!--core-collapse shows table settings. Toggled off by default-->
       <core-collapse id="ctrl_collapse" opened="false">
-        <!--<th-u-data-selector id="data_selector" input="{{input}}"></th-u-data-selector>-->
+        <!--<lens-u-data-selector id="data_selector" input="{{input}}"></lens-u-data-selector>-->
         <label class="label">
          filter: 
         </label>

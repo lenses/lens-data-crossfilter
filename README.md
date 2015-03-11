@@ -1,3 +1,3 @@
-# th-data-crossfilter
+# lens-data-crossfilter
 
-See the [component page](http://thelmanews.github.io/th-data-crossfilter) for more information.
+See the [component page](http://thelmanews.github.io/lens-data-crossfilter) for more information.
