@@ -6,19 +6,20 @@
 
 <!--
 
-A component for crossfiltering data using square crossfilter library
+A transform component to visually crossfilter output. 
 
 ##### Example
 
     <lens-data-crossfilter></lens-data-crossfilter>
 
 @element lens-data-crossfilter
-@blurb Element providing solution to no problem in particular.
+@blurb A transform component to visually crossfilter output.
 @status alpha
 @homepage http://lenses.github.io/lens-data-crossfilter
 -->
 
 <polymer-element name="lens-data-crossfilter" attributes="input output ">
+
   <template>
     <link rel="stylesheet" href="lens-data-crossfilter.css">
     <div class="lens-container lens-data">
@@ -45,30 +46,38 @@ A component for crossfiltering data using square crossfilter library
         </div>
 
     </div>
-
   </template>
+
   <script src="../d3/d3.min.js"></script> <!--TODO: ? use d3-import.html? -->
   <script src="lib/crossfilter.js"></script> 
   <script>
     Polymer({
-      
-      /*
-       input: [
-        {aaa: 7, b: 2, c: 12, d: 5},
-        {aaa: 4, b: 1, c: 14, d: 6},
-        {aaa: 3, b: 2, c: 13, d: 7},
-        {aaa: 1, b: 3, c: 13, d: 8},
-        {aaa: 3, b: 0, c: 14, d: 9},
-        {aaa: 8, b: 2, c: 20, d: 10},
-        {aaa: 1, b: 2, c: 10, d: 11},
-        {aaa: 2, b: 2, c: 15, d: 12},
-        {aaa: 5, b: 3, c: 18, d: 13},
-        {aaa: 2, b: 2, c: 15, d: 14},
-        {aaa: 3, b: 1, c: 12, d: 15},
-        {aaa: 9, b: 2, c: 20, d: 16}
-        ],
-        */
-        
+
+      /**
+       *  Input data
+       *  
+       *  @property input
+       *  @type Array
+       *  @default null
+       */
+
+      /**
+       *  Output data
+       *  
+       *  @property output
+       *  @type Array
+       *  @default null
+       */
+
+      /**
+       *  Label(s) of the column(s) selected for crossfiltering.
+       *  Array of strings.
+       *  
+       *  @property selectedLabels
+       *  @type Array
+       *  @default null
+       */
+
 
       observe: {
         labelValueSelection: "inputChanged"
@@ -91,7 +100,6 @@ A component for crossfiltering data using square crossfilter library
 
       
       inputChanged: function() {
-
         var self = this;
 
         if(!self.input) {
@@ -172,7 +180,6 @@ A component for crossfiltering data using square crossfilter library
 
         console.log(this._dimensions);
 
-
         var chart;
 
 
@@ -193,14 +200,9 @@ A component for crossfiltering data using square crossfilter library
           d3.select(this).call(method);
         }
 
-         function renderAll() {
+        function renderAll() {
             chart.each(render);
         }
-
-
-
-
-
 
         function barChart() {
             if (!barChart.id) barChart.id = 0;
@@ -219,13 +221,10 @@ A component for crossfiltering data using square crossfilter library
 
 
             function chart(div) {
-
-              console.log('range',x.range());
+              // console.log('range',x.range());
               var range = x.range(),
                   width = range[range.length-1],
                   height = y.range()[0];
-
-              
 
               y.domain([0, group.top(1)[0].value]);
 
@@ -322,6 +321,7 @@ A component for crossfiltering data using square crossfilter library
               }
             }
             //end chart
+
 
             brush.on("brushstart.chart", function() {
               var div = d3.select(this.parentNode.parentNode.parentNode);

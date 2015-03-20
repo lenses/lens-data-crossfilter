@@ -1,3 +1,5 @@
 # lens-data-crossfilter
 
-See the [component page](http://thelmanews.github.io/lens-data-crossfilter) for more information.
+A transform component to visually crossfilter output.
+
+See the [component page](http://lenses.github.io/lens-data-crossfilter) for more information.
