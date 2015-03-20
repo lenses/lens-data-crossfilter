@@ -1,8 +1,7 @@
 <link rel="import" href="../polymer/polymer.html"> 
-<link rel="import" href="../core-collapse/core-collapse.html">
-<link rel="import" href="../core-input/core-input.html">
-<link rel="import" href="../core-icon-button/core-icon-button.html">
-<link rel="import" href="../lens-u-data-selector/lens-u-data-selector.html">
+<!-- <link rel="import" href="../core-input/core-input.html">
+<link rel="import" href="../core-icon-button/core-icon-button.html"> -->
+<!-- <link rel="import" href="../lens-u-data-selector/lens-u-data-selector.html"> -->
 
 
 <!--
@@ -16,21 +15,14 @@ A component for crossfiltering data using square crossfilter library
 @element lens-data-crossfilter
 @blurb Element providing solution to no problem in particular.
 @status alpha
-@homepage http://thelmanews.github.io/lens-data-crossfilter
+@homepage http://lenses.github.io/lens-data-crossfilter
 -->
 
 <polymer-element name="lens-data-crossfilter" attributes="input output ">
   <template>
     <link rel="stylesheet" href="lens-data-crossfilter.css">
-    <div class="lens-container">
+    <div class="lens-container lens-data">
 
-      <template if="{{!included}}">
-        <core-icon-button icon="perm-data-setting" on-click="{{showControls}}"></core-icon-button>
-      </template>
-
-
-      <!--core-collapse shows table settings. Toggled off by default-->
-      <core-collapse id="ctrl_collapse" opened="false">
         <!--<lens-u-data-selector id="data_selector" input="{{input}}"></lens-u-data-selector>-->
         <label class="label">
          filter: 
@@ -51,7 +43,7 @@ A component for crossfiltering data using square crossfilter library
             </div>
           </template>
         </div>
-      </core-collapse>
+
     </div>
 
   </template>
@@ -186,16 +178,13 @@ A component for crossfiltering data using square crossfilter library
 
         setTimeout(function() {
 
-        var chartDivs = this.shadowRoot.querySelectorAll('.chart');
+          var chartDivs = this.shadowRoot.querySelectorAll('.chart');
 
+          chart = d3.selectAll(chartDivs)
+                .data(this._charts)
+                .each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });  
 
-
-        chart = d3.selectAll(chartDivs)
-              .data(this._charts)
-              .each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });  
-
-        chart.each(render);      
-
+          chart.each(render);
 
         }.bind(this),100);
 
@@ -206,7 +195,7 @@ A component for crossfiltering data using square crossfilter library
 
          function renderAll() {
             chart.each(render);
-        }        
+        }
 
 
 
@@ -416,20 +405,8 @@ A component for crossfiltering data using square crossfilter library
             return d3.rebind(chart, brush, "on");
 
           }
-          
 
-          
-
-      },       
-      /**
-       *  Toggles whether the settings box is open or closed.
-       *  Defaults to closed.
-       *  
-       *  @method showControls
-       */
-      showControls: function(e) {
-        this.$.ctrl_collapse.toggle();
-      },
+      }
 
     });
   </script>
