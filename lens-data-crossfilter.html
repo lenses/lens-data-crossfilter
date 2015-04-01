@@ -173,6 +173,11 @@ A transform component to visually crossfilter output.
             this._dimensions.push(dimension);
             this._charts.push(dimension.chart);
 
+
+             
+        }.bind(this));
+
+        this._dimensions.forEach(function(dimension) {
             // if there is a range set as an attribute for this dimension, apply it!
             var preSetRange = this.selectedRanges[dimension.chart.id()];
             if(preSetRange) {
@@ -180,7 +185,6 @@ A transform component to visually crossfilter output.
 
             }
 
-             
         }.bind(this));
 
         var chart;
@@ -279,7 +283,7 @@ A transform component to visually crossfilter output.
                 if (brushDirty) {
                   brushDirty = false;
                   g.selectAll(".brush").call(brush);
-                  div.select(".title a").style("display", brush.empty() ? "none" : null);
+                  //div.select(".title a").style("display", brush.empty() ? "none" : null);
                   if (brush.empty()) {
                     g.selectAll("#clip-" + id + " rect")
                         .attr("x", 0)
@@ -346,10 +350,11 @@ A transform component to visually crossfilter output.
                 extent = [ordinalSelection[0], ordinalSelection[ordinalSelection.length-1]];
               }
 
-              console.log('extent', extent,  x(extent[0]) , x(extent[1]) );
+              //console.log('extent', extent,  x(extent[0]) , x(extent[1]) );
               g.select("#clip-" + id + " rect")
                   .attr("x", x(extent[0]))
                   .attr("width", x(extent[1]) - x(extent[0]));
+              
               dimension.filterRange(extent);
 
               self.selectedRanges[id] = extent;
@@ -360,12 +365,15 @@ A transform component to visually crossfilter output.
             brush.on("brushend.chart", function() {
               if (brush.empty()) {
                 var div = d3.select(this.parentNode.parentNode.parentNode);
-                div.select(".title a").style("display", "none");
+                //div.select(".title a").style("display", "none");
                 div.select("#clip-" + id + " rect").attr("x", null).attr("width", "100%");
-                // clear dimenssion filters
+                // clear dimension filters
                 dimension.filterAll();
+
+                //chart.filter();
                 // clear selected ranges
                 self.selectedRanges[id] = null;
+
                 // recalculate output
                 self.output = dimension.top(Infinity);
               }
