@@ -173,6 +173,13 @@ A transform component to visually crossfilter output.
             this._dimensions.push(dimension);
             this._charts.push(dimension.chart);
 
+            // if there is a range set as an attribute for this dimension, apply it!
+            var preSetRange = this.selectedRanges[dimension.chart.id()];
+            if(preSetRange) {
+              dimension.chart.filter(preSetRange);
+
+            }
+
              
         }.bind(this));
 
@@ -339,7 +346,7 @@ A transform component to visually crossfilter output.
                 extent = [ordinalSelection[0], ordinalSelection[ordinalSelection.length-1]];
               }
 
-              //console.log('extent', extent,  x(extent[0]) , x(extent[1]) );
+              console.log('extent', extent,  x(extent[0]) , x(extent[1]) );
               g.select("#clip-" + id + " rect")
                   .attr("x", x(extent[0]))
                   .attr("width", x(extent[1]) - x(extent[0]));
@@ -363,6 +370,12 @@ A transform component to visually crossfilter output.
                 self.output = dimension.top(Infinity);
               }
             });
+
+            chart.id = function(_) {
+              if (!arguments.length) return id;
+              id = _;
+              return chart;
+            };
 
             chart.margin = function(_) {
               if (!arguments.length) return margin;
@@ -394,6 +407,8 @@ A transform component to visually crossfilter output.
               if (_) {
                 brush.extent(_);
                 dimension.filterRange(_);
+                self.output = dimension.top(Infinity);
+
               } else {
                 brush.clear();
                 dimension.filterAll();
