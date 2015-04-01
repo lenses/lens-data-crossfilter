@@ -18,7 +18,7 @@ A transform component to visually crossfilter output.
 @homepage http://lenses.github.io/lens-data-crossfilter
 -->
 
-<polymer-element name="lens-data-crossfilter" attributes="input output ">
+<polymer-element name="lens-data-crossfilter" attributes="input output selectedLabels">
 
   <template>
     <link rel="stylesheet" href="lens-data-crossfilter.css">
@@ -29,7 +29,7 @@ A transform component to visually crossfilter output.
          filter: 
         </label>
           
-        <core-selector class="selector" id="value_selector"  valueattr="label" multi="true">
+        <core-selector class="selector" id="value_selector"  selected="{{selectedLabels}}" valueattr="label" multi="true">
             <template repeat="{{attr in _dataAttributes}}">
               <template if="{{attr}}">
                 <div class="col" label="{{attr}}">{{attr}}</div>
@@ -80,18 +80,11 @@ A transform component to visually crossfilter output.
 
 
       observe: {
-        labelValueSelection: "inputChanged"
+        selectedLabels: "inputChanged"
       },
 
 
       domReady: function () {
-
-
-        this.$.value_selector.addEventListener('core-select', function() {
-          this.selectedLabels = [];
-          this.selectedLabels = this.$.value_selector.selected;
-          this.inputChanged();
-        }.bind(this));
 
         this.inputChanged();
 
