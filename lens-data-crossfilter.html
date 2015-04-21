@@ -155,8 +155,9 @@ A transform component to visually crossfilter output.
                 .dimension(dimension.dim)
                 .group(dimension.group)
                 .x(d3.scale.linear()
+                //.domain([parseFloat(dimension.min), parseFloat(dimension.max)])//+range*.1])
                 .domain([parseFloat(dimension.min), parseFloat(dimension.max)+range*.1])
-                .rangeRound([0, 10 * 24]));
+                .range([0, 240]));
 
             }
             else {
@@ -167,7 +168,7 @@ A transform component to visually crossfilter output.
                 .group(dimension.group)
                 .x(d3.scale.ordinal()
                 .domain(domain)
-                .rangeRoundPoints([0, 10 * 24]));
+                .rangeRoundPoints([0, 240]));
 
 
             }
@@ -194,22 +195,11 @@ A transform component to visually crossfilter output.
         //Polymer.flush();
         var i = 0;
 
+        // delay to make sure the template has been applied by polymer
         setTimeout(function() {
 
 
           setupCharts(this, charts);
-
-/*
-          var chartDivs = this.shadowRoot.querySelectorAll('.chart');
-
-          console.log('chartDivs', chartDivs);
-
-          charts = d3.selectAll(chartDivs)
-                .data(this._charts)
-                .each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });  
-
-          charts.each(render);
-          */
 
           
         }.bind(this),200);
@@ -219,33 +209,25 @@ A transform component to visually crossfilter output.
 
           var chartDivs = self.shadowRoot.querySelectorAll('.chart');
 
-          console.log('chartDivs', chartDivs);
-
           charts = d3.selectAll(chartDivs);
                 
-          console.log('RMMMM' , charts.select('svg'));
           charts.data(self._charts);
 
+          // remoe the svgs to force recreation of charts. the selection stays (by selectedRanges)
           charts.selectAll('svg').remove();      
+          
           charts.each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });
-
-
-
-          //console.log('RENDER', render);
+          
           charts.each(render);
 
         }
 
 
        function render(method) {
-          //calls chart(div) function.
-          //console.log('!!!! ', this. method);
           d3.select(this).call(method);
         }
 
         function renderAll() {
-           // console.log('render all');
-           // console.log('chart', chart);
             charts.each(render);
         }
 
@@ -266,14 +248,12 @@ A transform component to visually crossfilter output.
 
 
             function chart(div, init) {
-              //console.log('argumants ',div, init);
               var range = x.range(),
                   width = range[range.length-1],
                   height = y.range()[0];
 
               y.domain([0, group.top(1)[0].value]);
 
-              //console.log('chart div', div);
 
               div.each(function() {
                 var div = d3.select(this),
@@ -284,12 +264,8 @@ A transform component to visually crossfilter output.
                 }
 
 
-                //console.log('each div', this, g);
-                //g.selectAll("*").remove();
-
                 // Create the skeletal chart.
                 if (g.empty()) {
-                  console.log('g empty', div);
                   div.select(".title").append("a")
                       .attr("href", "javascript:reset(" + id + ")")
                       .attr("class", "reset")
@@ -378,13 +354,6 @@ A transform component to visually crossfilter output.
             }
             //end chart
 
-/*
-            brush.on("brushstart.chart", function() {
-              var div = d3.select(this.parentNode.parentNode.parentNode);
-              div.select(".title a").style("display", null);
-            });
-
-*/
             brush.on("brush.chart", function() {
               var g = d3.select(this.parentNode),
                   extent = brush.extent();
@@ -393,18 +362,17 @@ A transform component to visually crossfilter output.
                 .selectAll(".resize")
                   .style("display", null);
 
-              // find selection for ordinal scale
-              var ordinalSelection =  x.domain().filter(function(d){return (brush.extent()[0] <= x(d)) && (x(d) <= brush.extent()[1])}); 
+              // if x scale has rangePints function (x is ordinal) find selection for ordinal scale
+              if(typeof x.rangePoints === "function") {
+                var ordinalSelection =  x.domain().filter(function(d){return (brush.extent()[0] <= x(d)) && (x(d) <= brush.extent()[1])}); 
 
-              // if there is ordinal selection (e.g. axis is ordinal)
-              if(ordinalSelection.length>0) {
                 extent = [ordinalSelection[0], ordinalSelection[ordinalSelection.length-1]];
               }
 
-              //console.log('extent', extent,  x(extent[0]) , x(extent[1]) );
               g.select("#clip-" + id + " rect")
                   .attr("x", x(extent[0]))
                   .attr("width", x(extent[1]) - x(extent[0]));
+
               
               dimension.filterRange(extent);
 
@@ -416,7 +384,6 @@ A transform component to visually crossfilter output.
             brush.on("brushend.chart", function() {
               if (brush.empty()) {
                 var div = d3.select(this.parentNode.parentNode.parentNode);
-                //div.select(".title a").style("display", "none");
                 div.select("#clip-" + id + " rect").attr("x", null).attr("width", "100%");
                 // clear dimension filters
                 dimension.filterAll();
