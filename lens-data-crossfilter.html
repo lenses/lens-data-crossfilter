@@ -366,7 +366,25 @@ A transform component to visually crossfilter output.
               if(typeof x.rangePoints === "function") {
                 var ordinalSelection =  x.domain().filter(function(d){return (brush.extent()[0] <= x(d)) && (x(d) <= brush.extent()[1])}); 
 
+                if(ordinalSelection.length===0) {
+                  return;
+                }
+
                 extent = [ordinalSelection[0], ordinalSelection[ordinalSelection.length-1]];
+
+                //use filter function to filter when ordinal
+                dimension.filterFunction(function(d) {
+                  return ordinalSelection.indexOf(d) > -1;
+                });
+
+                //TODO clip is slightly off not higlighting when partially selected, but it passes the partially selected value
+
+              }
+              else {
+
+                dimension.filterRange(extent);
+
+
               }
 
               g.select("#clip-" + id + " rect")
@@ -374,7 +392,6 @@ A transform component to visually crossfilter output.
                   .attr("width", x(extent[1]) - x(extent[0]));
 
               
-              dimension.filterRange(extent);
 
               self.selectedRanges[id] = extent;
 
