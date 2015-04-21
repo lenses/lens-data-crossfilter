@@ -94,7 +94,7 @@ A transform component to visually crossfilter output.
       domReady: function () {
 
 
-        this.inputChanged();
+        //this.inputChanged();
 
 
       },
@@ -121,12 +121,14 @@ A transform component to visually crossfilter output.
 
         this.output = this.input;
 
+        this._dimensions = [];
+        this._charts = [];
+
+
         this.crossfilter = crossfilter(this.input);
         this.groupAll = this.crossfilter.groupAll();
 
 
-        this._dimensions = [];
-        this._charts = [];
 
 
         if(!this.selectedLabels || this.selectedLabels.length===0 || !this.input[0][this.selectedLabels[0]]) {
@@ -187,28 +189,64 @@ A transform component to visually crossfilter output.
 
         }.bind(this));
 
-        var chart;
+        var charts = [];
 
+        //Polymer.flush();
+        var i = 0;
 
         setTimeout(function() {
 
+
+          setupCharts(this, charts);
+
+/*
           var chartDivs = this.shadowRoot.querySelectorAll('.chart');
 
-          chart = d3.selectAll(chartDivs)
+          console.log('chartDivs', chartDivs);
+
+          charts = d3.selectAll(chartDivs)
                 .data(this._charts)
                 .each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });  
 
-          chart.each(render);
+          charts.each(render);
+          */
 
-        }.bind(this),100);
+          
+        }.bind(this),200);
+
+        function setupCharts(self) {
+
+
+          var chartDivs = self.shadowRoot.querySelectorAll('.chart');
+
+          console.log('chartDivs', chartDivs);
+
+          charts = d3.selectAll(chartDivs);
+                
+          console.log('RMMMM' , charts.select('svg'));
+          charts.data(self._charts);
+
+          charts.selectAll('svg').remove();      
+          charts.each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });
+
+
+
+          //console.log('RENDER', render);
+          charts.each(render);
+
+        }
 
 
        function render(method) {
+          //calls chart(div) function.
+          //console.log('!!!! ', this. method);
           d3.select(this).call(method);
         }
 
         function renderAll() {
-            chart.each(render);
+           // console.log('render all');
+           // console.log('chart', chart);
+            charts.each(render);
         }
 
         function barChart() {
@@ -227,19 +265,31 @@ A transform component to visually crossfilter output.
                 round;
 
 
-            function chart(div) {
+            function chart(div, init) {
+              //console.log('argumants ',div, init);
               var range = x.range(),
                   width = range[range.length-1],
                   height = y.range()[0];
 
               y.domain([0, group.top(1)[0].value]);
 
+              //console.log('chart div', div);
+
               div.each(function() {
                 var div = d3.select(this),
                     g = div.select("g");
+                if(g, init)
+                {
+                  g.remove();
+                }
+
+
+                //console.log('each div', this, g);
+                //g.selectAll("*").remove();
 
                 // Create the skeletal chart.
                 if (g.empty()) {
+                  console.log('g empty', div);
                   div.select(".title").append("a")
                       .attr("href", "javascript:reset(" + id + ")")
                       .attr("class", "reset")
@@ -328,12 +378,13 @@ A transform component to visually crossfilter output.
             }
             //end chart
 
-
+/*
             brush.on("brushstart.chart", function() {
               var div = d3.select(this.parentNode.parentNode.parentNode);
               div.select(".title a").style("display", null);
             });
 
+*/
             brush.on("brush.chart", function() {
               var g = d3.select(this.parentNode),
                   extent = brush.extent();
