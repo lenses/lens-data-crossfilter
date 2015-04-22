@@ -71,57 +71,15 @@ input.col-name {
   stroke: #666;
 }
 
-#hour-chart {
-  width: 260px;
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
-#delay-chart {
-  width: 230px;
-}
-
-#distance-chart {
-  width: 420px;
-}
-
-#date-chart {
-  width: 920px;
-}
-
-#flight-list {
-  min-height: 1024px;
-}
-
-#flight-list .date,
-#flight-list .day {
-  margin-bottom: .4em;
-}
-
-#flight-list .flight {
-  line-height: 1.5em;
-  background: #eee;
-  width: 640px;
-  margin-bottom: 1px;
-}
-
-#flight-list .time {
-  color: #999;
-}
-
-#flight-list .flight div {
-  display: inline-block;
-  width: 100px;
-}
-
-#flight-list div.distance,
-#flight-list div.delay {
-  width: 160px;
-  padding-right: 10px;
-  text-align: right;
-}
-
-#flight-list .early {
-  color: green;
-}
 
 aside {
   position: absolute;

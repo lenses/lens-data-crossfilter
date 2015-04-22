@@ -22,7 +22,7 @@ A transform component to visually crossfilter output.
 
   <template>
     <link rel="stylesheet" href="lens-data-crossfilter.css">
-    <div class="lens-container lens-data">
+    <div class="lens-container lens-data noselect">
 
         <!--<lens-u-data-selector id="data_selector" input="{{input}}"></lens-u-data-selector>-->
         <label class="label">
@@ -355,6 +355,7 @@ A transform component to visually crossfilter output.
             //end chart
 
             brush.on("brush.chart", function() {
+              
               var g = d3.select(this.parentNode),
                   extent = brush.extent();
               if (round) g.select(".brush")
@@ -396,6 +397,7 @@ A transform component to visually crossfilter output.
               self.selectedRanges[id] = extent;
 
               self.output = dimension.top(Infinity);
+
             });
 
             brush.on("brushend.chart", function() {
