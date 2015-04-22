@@ -1,0 +1,25 @@
+{
+  "name": "th-data-utility",
+  "keywords": "lenses, polymer, web-components",
+  "main": "th-data-utility.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.5.1",
+    "lodash": "lodash/lodash#~3.3.1",
+    "numeral": "adamwdraper/Numeral-js#~1.5.3",
+    "moment": "moment/moment#~2.9.0",
+    "core-component-page": "Polymer/core-component-page#^0.5.5"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^1.4.2"
+  },
+  "homepage": "https://github.com/thelmanews/lens-u-data-utility",
+  "_release": "d4497b56af",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "d4497b56af91cb0a5623183fbe06149c01c857d3"
+  },
+  "_source": "git://github.com/thelmanews/lens-u-data-utility.git",
+  "_target": "*",
+  "_originalSource": "thelmanews/lens-u-data-utility"
+}
