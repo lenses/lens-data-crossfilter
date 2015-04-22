@@ -1,7 +1,8 @@
 {
   "name": "lens-data-crossfilter",
-  "version": "0.0.0",
-  "keywords": "lenses, polymer, web-components",
+  "version": "0.0.1",
+  "license": "MIT",
+  "keywords": "lenses, polymer, web-components, crossfilter, crossfilter.js, d3, d3.js",
   "main": "lens-data-crossfilter.html",
   "dependencies": {
     "d3": "d3#>=3.4.11",
