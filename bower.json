@@ -7,7 +7,7 @@
   "dependencies": {
     "d3": "d3#>=3.4.11",
     "polymer": "Polymer/polymer#^1.0.0",
-    "lens-u-data-selector": "lenses/lens-u-data-selector",
+    "lens-u-data-selector": "lenses/lens-u-data-selector"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
