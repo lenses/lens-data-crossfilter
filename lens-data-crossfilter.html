@@ -1,6 +1,6 @@
 <link rel="import" href="../polymer/polymer.html"> 
-<!-- <link rel="import" href="../core-input/core-input.html">
-<link rel="import" href="../core-icon-button/core-icon-button.html"> -->
+<!-- <link rel="import" href="../iron-input/iron-input.html">
+<link rel="import" href="../iron-icon-button/iron-icon-button.html"> -->
 <link rel="import" href="../lens-u-data-selector/lens-u-data-selector.html">
 
 
@@ -18,7 +18,7 @@ A transform component to visually crossfilter output.
 @homepage http://lenses.github.io/lens-data-crossfilter
 -->
 
-<polymer-element name="lens-data-crossfilter" attributes="input output selectedLabels selectedRanges">
+<dom-module id="lens-data-crossfilter" attributes="input output selectedLabels selectedRanges">
 
   <template>
     <link rel="stylesheet" href="lens-data-crossfilter.css">
@@ -29,16 +29,16 @@ A transform component to visually crossfilter output.
          Select columns: 
         </label>
           
-        <core-selector class="selector" id="value_selector"  selected="{{selectedLabels}}" valueattr="label" multi="true">
-            <template repeat="{{attr in _dataAttributes}}">
+        <iron-selector class="selector" id="value_selector"  selected="{{selectedLabels}}" valueattr="label" multi="true">
+            <template is="dom-repeat" items="{{_dataAttributes}}" as="attr">
               <template if="{{attr}}">
                 <div class="col" label="{{attr}}">{{attr}}</div>
               </template>
             </template>
-        </core-selector>
+        </iron-selector>
         <div class="charts">
 
-          <template repeat="{{attr in selectedLabels}}">
+          <template is="dom-repeat" items="{{_dataAttributes}}" as="attr">
             {{attr}}
             <div class="chart" id="data-{{attr}}">
             </div>
@@ -52,7 +52,25 @@ A transform component to visually crossfilter output.
   <script src="lib/crossfilter.js"></script> 
   <script>
     Polymer({
-
+      is: 'lens-data-crossfilter',
+      properties: {
+        input: {
+          type: Array,
+          value: [],
+          observer: '_inputChanged'
+        },
+      output: {
+        type: Array,
+      },
+      selectedLabels: {
+        type: Array,
+        observer: '_inpotChanged'
+      },
+      selectedRanges: {
+        type: Array,
+        observer: '_inpotChanged'
+      }
+    },
       /**
        *  Input data
        *  
@@ -79,28 +97,16 @@ A transform component to visually crossfilter output.
        */
 
 
-      observe: {
-        selectedLabels: "inputChanged"
-      },
 
-      created: function() {
+      ready: function() {
 
         this.selectedRanges = [];
         this.selectedLabels = [];
 
       },
 
-
-      domReady: function () {
-
-
-        //this.inputChanged();
-
-
-      },
-
       
-      inputChanged: function() {
+      _inputChanged: function() {
         var self = this;
 
         if(!self.input) {
@@ -482,4 +488,4 @@ A transform component to visually crossfilter output.
 
     });
   </script>
-</polymer-element>
+</dom-module>
