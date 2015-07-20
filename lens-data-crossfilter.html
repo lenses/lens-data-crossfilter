@@ -31,7 +31,7 @@ A transform component to visually crossfilter output.
           
         <iron-selector class="selector" id="value_selector"  selected="{{selectedLabels}}" valueattr="label" multi="true">
             <template is="dom-repeat" items="{{_dataAttributes}}" as="attr">
-              <template if="{{attr}}">
+              <template is="dom-if" if="{{attr}}">
                 <div class="col" label="{{attr}}">{{attr}}</div>
               </template>
             </template>
@@ -39,7 +39,7 @@ A transform component to visually crossfilter output.
         <div class="charts">
 
           <template is="dom-repeat" items="{{_dataAttributes}}" as="attr">
-            {{attr}}
+            <span>{{attr}}</span>
             <div class="chart" id="data-{{attr}}">
             </div>
           </template>
@@ -64,11 +64,11 @@ A transform component to visually crossfilter output.
       },
       selectedLabels: {
         type: Array,
-        observer: '_inpotChanged'
+        observer: '_inputChanged'
       },
       selectedRanges: {
         type: Array,
-        observer: '_inpotChanged'
+        observer: '_inputChanged'
       }
     },
       /**
@@ -126,6 +126,8 @@ A transform component to visually crossfilter output.
         }
 
         this.output = this.input;
+
+        self.fire('lens-output-changed', self.output);
 
         this._dimensions = [];
         this._charts = [];
@@ -213,7 +215,7 @@ A transform component to visually crossfilter output.
         function setupCharts(self) {
 
 
-          var chartDivs = self.shadowRoot.querySelectorAll('.chart');
+          var chartDivs = Polymer.dom(self.root).querySelectorAll('.chart');//self.shadowRoot.querySelectorAll('.chart');
 
           charts = d3.selectAll(chartDivs);
                 
@@ -221,8 +223,14 @@ A transform component to visually crossfilter output.
 
           // remoe the svgs to force recreation of charts. the selection stays (by selectedRanges)
           charts.selectAll('svg').remove();      
+
+          console.log(charts);
           
-          charts.each(function(chart) { chart.on("brush", renderAll).on("brushend", renderAll); });
+          charts.each(function(chart) { 
+            console.log(chart);
+            if(chart)
+              chart.on("brush", renderAll).on("brushend", renderAll);
+          });
           
           charts.each(render);
 
@@ -404,6 +412,8 @@ A transform component to visually crossfilter output.
 
               self.output = dimension.top(Infinity);
 
+              self.fire('lens-output-changed', self.output);
+
             });
 
             brush.on("brushend.chart", function() {
@@ -419,6 +429,8 @@ A transform component to visually crossfilter output.
 
                 // recalculate output
                 self.output = dimension.top(Infinity);
+
+                self.fire('lens-output-changed', self.output);
               }
             });
 
@@ -459,6 +471,9 @@ A transform component to visually crossfilter output.
                 brush.extent(_);
                 dimension.filterRange(_);
                 self.output = dimension.top(Infinity);
+
+                self.fire('lens-output-changed', self.output);
+
 
               } else {
                 brush.clear();
