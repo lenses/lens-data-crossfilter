@@ -18,7 +18,7 @@ A transform component to visually crossfilter output.
 @homepage http://lenses.github.io/lens-data-crossfilter
 -->
 
-<dom-module id="lens-data-crossfilter" attributes="input output selectedLabels selectedRanges">
+<dom-module id="lens-data-crossfilter">
 
   <template>
     <link rel="stylesheet" href="lens-data-crossfilter.css">
@@ -29,7 +29,7 @@ A transform component to visually crossfilter output.
          Select columns: 
         </label>
           
-        <iron-selector class="selector" id="value_selector"  selected="{{selectedLabels}}" valueattr="label" multi="true">
+        <iron-selector class="selector" id="value_selector"  selected="{{selectedLabels}}" attr-for-selected="label" multi="true">
             <template is="dom-repeat" items="{{_dataAttributes}}" as="attr">
               <template is="dom-if" if="{{attr}}">
                 <div class="col" label="{{attr}}">{{attr}}</div>
