@@ -20,8 +20,9 @@ A transform component to visually crossfilter output.
 
 <dom-module id="lens-data-crossfilter">
 
+  <link rel="stylesheet" href="lens-data-crossfilter.css">
+
   <template>
-    <link rel="stylesheet" href="lens-data-crossfilter.css">
     <div class="lens-container lens-data noselect">
 
         <!--<lens-u-data-selector id="data_selector" input="{{input}}"></lens-u-data-selector>-->
@@ -29,20 +30,26 @@ A transform component to visually crossfilter output.
          Select columns: 
         </label>
           
-        <iron-selector class="selector" id="value_selector"  selected="{{selectedLabels}}" attr-for-selected="label" multi="true">
+        <iron-selector class="selector" id="value_selector"   selected-values="{{selectedLabels}}" attr-for-selected="label" multi="true">
+            <div class="col" label="HT">HT</div>
+            <div class="col" label="WT">WT</div>
+            <!--
             <template is="dom-repeat" items="{{_dataAttributes}}" as="attr">
               <template is="dom-if" if="{{attr}}">
                 <div class="col" label="{{attr}}">{{attr}}</div>
               </template>
             </template>
+            -->
         </iron-selector>
-        <div class="charts">
-
-          <template is="dom-repeat" items="{{_dataAttributes}}" as="attr">
+        <span>{{selectedLabels.length}}</span>
+        <div id="charts">
+          <!--
+          <template is="dom-repeat" items="{{selectedLabels}}" as="attr">
             <span>{{attr}}</span>
             <div class="chart" id="data-{{attr}}">
             </div>
           </template>
+          -->
         </div>
 
     </div>
@@ -59,17 +66,22 @@ A transform component to visually crossfilter output.
           value: [],
           observer: '_inputChanged'
         },
-      output: {
-        type: Array,
-      },
-      selectedLabels: {
-        type: Array,
-        observer: '_inputChanged'
-      },
-      selectedRanges: {
-        type: Array,
-        observer: '_inputChanged'
-      }
+        output: {
+          type: Array,
+        },
+        selectedLabels: {
+          type: Array,
+           //value: [],
+           notify: true,
+           observer: '_inputChanged'
+        },
+        selectedRanges: {
+          type: Array,
+          value: [],
+          notify: true,
+          reflectToAttribute: true,
+          observer: '_inputChanged'
+        }
     },
       /**
        *  Input data
@@ -100,14 +112,23 @@ A transform component to visually crossfilter output.
 
       ready: function() {
 
-        this.selectedRanges = [];
-        this.selectedLabels = [];
+        //this.selectedRanges = [];
+        //this.selectedLabels = [];
+        this.addEventListener('iron-select', function(e) {
+           this._inputChanged();
+        });
+        this.addEventListener('iron-deselect', function(e) {
+           this._inputChanged();
+        });
+        
 
       },
 
       
       _inputChanged: function() {
         var self = this;
+
+        console.log('input changed');
 
         if(!self.input) {
           return;
@@ -137,6 +158,15 @@ A transform component to visually crossfilter output.
         this.groupAll = this.crossfilter.groupAll();
 
 
+          var chartDivs = Polymer.dom(self.root).querySelectorAll('.chart');
+          [].forEach.call(chartDivs, function(div) {
+            var label = div.classList[1];
+            console.log(label, self.selectedLabels.indexOf(label))
+            if(self.selectedLabels.indexOf(label)<0) {
+              console.log('removing');
+              Polymer.dom(self.$.charts).removeChild(div);
+            }
+          });
 
 
         if(!this.selectedLabels || this.selectedLabels.length===0 || !this.input[0][this.selectedLabels[0]]) {
@@ -204,27 +234,43 @@ A transform component to visually crossfilter output.
         var i = 0;
 
         // delay to make sure the template has been applied by polymer
-        setTimeout(function() {
+        //setTimeout(function() {
 
 
           setupCharts(this, charts);
 
           
-        }.bind(this),200);
+        //}.bind(this),200);
 
         function setupCharts(self) {
 
+          console.log('setup chants')
 
-          var chartDivs = Polymer.dom(self.root).querySelectorAll('.chart');//self.shadowRoot.querySelectorAll('.chart');
+
+          var chartsDiv = Polymer.dom(self.$.charts);
+
+
+          self.selectedLabels.forEach(function(label) {
+              var chartDiv = chartsDiv.querySelector('.'+label);
+              if(!chartDiv) {
+                var newChartDiv = document.createElement('div');
+                newChartDiv.classList.add('chart');
+                newChartDiv.classList.add(label);
+                chartsDiv.appendChild(newChartDiv);
+              }
+          });
+
+
+          chartDivs = Polymer.dom(self.root).querySelectorAll('.chart');
+
 
           charts = d3.selectAll(chartDivs);
-                
+
           charts.data(self._charts);
 
           // remoe the svgs to force recreation of charts. the selection stays (by selectedRanges)
           charts.selectAll('svg').remove();      
 
-          console.log(charts);
           
           charts.each(function(chart) { 
             console.log(chart);

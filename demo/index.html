@@ -127,9 +127,11 @@
             var preOutput = document.getElementById('output');
 
             //set the input
+            console.log('setting input');
             elem.input = input;
-            elem.selectedLabels = ['HT','AGE'];
-            elem.selectedRanges[0] = [70,74];
+            console.log('input set');
+            //elem.selectedLabels = ['HT','AGE'];
+            //elem.selectedRanges[0] = [70,74];
 
             preInput.textContent = JSON.stringify(input, undefined, 2);
 
