@@ -31,17 +31,12 @@ A transform component to visually crossfilter output.
         </label>
           
         <iron-selector class="selector" id="value_selector"   selected-values="{{selectedLabels}}" attr-for-selected="label" multi="true">
-            <div class="col" label="HT">HT</div>
-            <div class="col" label="WT">WT</div>
-            <!--
             <template is="dom-repeat" items="{{_dataAttributes}}" as="attr">
               <template is="dom-if" if="{{attr}}">
                 <div class="col" label="{{attr}}">{{attr}}</div>
               </template>
             </template>
-            -->
         </iron-selector>
-        <span>{{selectedLabels.length}}</span>
         <div id="charts">
           <!--
           <template is="dom-repeat" items="{{selectedLabels}}" as="attr">
@@ -71,7 +66,7 @@ A transform component to visually crossfilter output.
         },
         selectedLabels: {
           type: Array,
-           //value: [],
+           value: [],
            notify: true,
            observer: '_inputChanged'
         },
@@ -128,8 +123,6 @@ A transform component to visually crossfilter output.
       _inputChanged: function() {
         var self = this;
 
-        console.log('input changed');
-
         if(!self.input) {
           return;
         }
@@ -157,16 +150,13 @@ A transform component to visually crossfilter output.
         this.crossfilter = crossfilter(this.input);
         this.groupAll = this.crossfilter.groupAll();
 
+        //use d3 to add/remove divs for crossfilter charts.
+        var d3Container = d3.select(this.$.charts);
+        var chartsDiv = d3Container.selectAll('.chart').data(this.selectedLabels);//.order(); //TODO keep order
 
-          var chartDivs = Polymer.dom(self.root).querySelectorAll('.chart');
-          [].forEach.call(chartDivs, function(div) {
-            var label = div.classList[1];
-            console.log(label, self.selectedLabels.indexOf(label))
-            if(self.selectedLabels.indexOf(label)<0) {
-              console.log('removing');
-              Polymer.dom(self.$.charts).removeChild(div);
-            }
-          });
+        chartsDiv.exit().remove();
+
+        var chartDivs = chartsDiv.enter().insert('div').attr('class','chart');
 
 
         if(!this.selectedLabels || this.selectedLabels.length===0 || !this.input[0][this.selectedLabels[0]]) {
@@ -233,38 +223,11 @@ A transform component to visually crossfilter output.
         //Polymer.flush();
         var i = 0;
 
-        // delay to make sure the template has been applied by polymer
-        //setTimeout(function() {
+        setupCharts(this, chartDivs);
 
+        function setupCharts(self, chartDivs) {
 
-          setupCharts(this, charts);
-
-          
-        //}.bind(this),200);
-
-        function setupCharts(self) {
-
-          console.log('setup chants')
-
-
-          var chartsDiv = Polymer.dom(self.$.charts);
-
-
-          self.selectedLabels.forEach(function(label) {
-              var chartDiv = chartsDiv.querySelector('.'+label);
-              if(!chartDiv) {
-                var newChartDiv = document.createElement('div');
-                newChartDiv.classList.add('chart');
-                newChartDiv.classList.add(label);
-                chartsDiv.appendChild(newChartDiv);
-              }
-          });
-
-
-          chartDivs = Polymer.dom(self.root).querySelectorAll('.chart');
-
-
-          charts = d3.selectAll(chartDivs);
+          charts = chartDivs;
 
           charts.data(self._charts);
 
@@ -273,8 +236,6 @@ A transform component to visually crossfilter output.
 
           
           charts.each(function(chart) { 
-            console.log(chart);
-            if(chart)
               chart.on("brush", renderAll).on("brushend", renderAll);
           });
           
