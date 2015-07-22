@@ -30,7 +30,8 @@ A transform component to visually crossfilter output.
          Select columns: 
         </label>
           
-        <iron-selector class="selector" id="value_selector"   selected-values="{{selectedLabels}}" attr-for-selected="label" multi="true">
+        <iron-selector class="selector" id="value_selector" selected-values="{{selectedLabels}}"
+          on-iron-select="_inputChanged" on-iron-deselect="_inputChanged" attr-for-selected="label" multi="true">
             <template is="dom-repeat" items="{{_dataAttributes}}" as="attr">
               <template is="dom-if" if="{{attr}}">
                 <div class="col" label="{{attr}}">{{attr}}</div>
@@ -106,16 +107,6 @@ A transform component to visually crossfilter output.
 
 
       ready: function() {
-
-        //this.selectedRanges = [];
-        //this.selectedLabels = [];
-        this.addEventListener('iron-select', function(e) {
-           this._inputChanged();
-        });
-        this.addEventListener('iron-deselect', function(e) {
-           this._inputChanged();
-        });
-        
 
       },
 
