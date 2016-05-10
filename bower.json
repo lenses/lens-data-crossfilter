@@ -1,18 +1,16 @@
 {
   "name": "lens-data-crossfilter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "keywords": "lenses, polymer, web-components, crossfilter, crossfilter.js, d3, d3.js",
   "main": "lens-data-crossfilter.html",
   "dependencies": {
     "d3": "d3#>=3.4.11",
-    "polymer": "Polymer/polymer#~0.5.5",
-    "th-theme": "thelmanews/th-theme",
-    "lens-u-data-selector": "lenses/lens-u-data-selector",
-    "core-component-page" : "Polymer/core-component-page#^0.5.5"
+    "polymer": "Polymer/polymer#~1.0.0",
+    "iron-component-page" : "Polymer/iron-component-page#^1.1.6"
   },
   "devDependencies": {
-    "web-component-tester": "Polymer/web-component-tester#^2.2.6"
+    "web-component-tester": "Polymer/web-component-tester#^4.2.2"
   }
 }
 
